@@ -26,10 +26,16 @@ namespace Jeti_v0
             // Load securities
             var tkrs = GetActiveContracts();
 
-
             ////Begin data collection manager  (gets a list of securities and opens API calls to start downloading real time data and storing in local database)
             //DataCollectionManager(ApiWrappper);
-            
+            Parallel.foreach{tckr in tckrs{} }
+
+            //Signal Zoo - capture and calutulate signals on incoming data
+
+
+            //Trade Selection - 
+
+
             ////Shut down           
             //Console.WriteLine("Disconnecting... Please press ENTER to close application.");
             //Console.ReadLine();
@@ -49,30 +55,7 @@ namespace Jeti_v0
 
 
         private static void DataCollectionManager(EWrapperImpl wrapper)
-        {
-            // Get list of contracts to monitor from SQL
-            //use entity framework from SMF table
-            //------------------------------------------------
-            //public static Contract JetiCrudeFuturesTest()
-            //{
-            //Contract contract = new Contract();
-            //contract.SecType = "FUT";
-            //contract.Exchange = "NYMEX";
-            //contract.Currency = "USD";
-            //contract.LocalSymbol = "CLM6";
-            //return contract;
-            //}----------------------------------------------------
-            //public static Contract GetUSStock()
-            //{
-            //Contract contract = new Contract();
-            //contract.Symbol = "AMZN";
-            //contract.SecType = "STK";
-            //contract.Currency = "USD";
-            //contract.Exchange = "SMART";
-            //return contract;
-            //}----------------------------------------------------
-
-
+        {    
             /*** Requesting real time bars ***/
             wrapper.ClientSocket.reqRealTimeBars(1, ContractSamples.JetiCrudeFuturesTest(), -1, "BID", false, GetFakeParameters(4));
             Thread.Sleep(5000);
