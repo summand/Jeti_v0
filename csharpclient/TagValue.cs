@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Jeti_v0
+namespace IBApi
 {
     [ComVisible(true)]
     public class TagValue : TWSApi.ITagValue

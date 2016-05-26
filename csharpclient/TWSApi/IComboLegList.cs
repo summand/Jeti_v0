@@ -25,13 +25,13 @@ namespace TWSLib
     [ComVisible(true)]
     public class ComboLegList : IComboLegList
     {
-        public List<Jeti_v0.ComboLeg> Ocl { get; private set; }
+        public List<IBApi.ComboLeg> Ocl { get; private set; }
 
-        public ComboLegList() : this(new List<Jeti_v0.ComboLeg>()) { this.Ocl = new List<Jeti_v0.ComboLeg>(); }
+        public ComboLegList() : this(new List<IBApi.ComboLeg>()) { this.Ocl = new List<IBApi.ComboLeg>(); }
 
-        public ComboLegList(List<Jeti_v0.ComboLeg> cbl) 
+        public ComboLegList(List<IBApi.ComboLeg> cbl) 
         { 
-            this.Ocl = cbl == null ? new List<Jeti_v0.ComboLeg>() : cbl;
+            this.Ocl = cbl == null ? new List<IBApi.ComboLeg>() : cbl;
         }
 
         public object _NewEnum
@@ -51,7 +51,7 @@ namespace TWSLib
 
         public object Add()
         {
-            var rval = new Jeti_v0.ComboLeg();
+            var rval = new IBApi.ComboLeg();
 
             Ocl.Add(rval);
 

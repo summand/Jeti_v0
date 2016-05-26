@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Globalization;
 
-namespace Jeti_v0
+namespace IBApi
 {
     public static class IBParamsList
     {

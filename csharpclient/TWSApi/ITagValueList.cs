@@ -34,12 +34,12 @@ namespace TWSLib
             return list == null ? null : list.Tvl.Select(x => new KeyValuePair<string, string>(x.Tag, x.Value)).ToArray();
         }
 
-        public List<Jeti_v0.TagValue> Tvl { get; private set; }
+        public List<IBApi.TagValue> Tvl { get; private set; }
 
-        public TagValueList() : this(new List<Jeti_v0.TagValue>()) { Tvl = new List<Jeti_v0.TagValue>(); }
-        public TagValueList(List<Jeti_v0.TagValue> tvl)
+        public TagValueList() : this(new List<IBApi.TagValue>()) { Tvl = new List<IBApi.TagValue>(); }
+        public TagValueList(List<IBApi.TagValue> tvl)
         {
-            this.Tvl = tvl == null ? new List<Jeti_v0.TagValue>() : tvl;
+            this.Tvl = tvl == null ? new List<IBApi.TagValue>() : tvl;
         }
 
         public object _NewEnum
@@ -59,7 +59,7 @@ namespace TWSLib
 
         public object AddEmpty()
         {
-            var rval = new Jeti_v0.TagValue();
+            var rval = new IBApi.TagValue();
 
             Tvl.Add(rval);
 
@@ -68,7 +68,7 @@ namespace TWSLib
 
         public object Add(string tag, string value)
         {
-            var rval = new Jeti_v0.TagValue(tag, value);
+            var rval = new IBApi.TagValue(tag, value);
 
             Tvl.Add(rval);
 

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jeti_v0;
+using IBApi;
 
-namespace Samples
+namespace Jeti_v0
 {
     public class EWrapperImpl : EWrapper 
     {
@@ -28,7 +28,8 @@ namespace Samples
         {
             Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP + "\n");
             Console.WriteLine("Time: " + time + ", Converted: " + UnixTimeStampToDateTime(time) + "\n");
-            RealTimeBarCapturetoDB(close, time, ticker);
+            //RealTimeBarCapturetoDB(close, time, ticker);
+            RealTimeBarCapturetoDB(close, time, "FakeTkr");
         }
 
         public void RealTimeBarCapturetoDB(double close, long time, string ticker)

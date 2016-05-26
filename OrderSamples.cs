@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jeti_v0;
+using IBApi;
 
-namespace Samples
+namespace Jeti_v0
 {
     public class OrderSamples
     {

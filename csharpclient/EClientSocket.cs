@@ -7,7 +7,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Jeti_v0
+namespace IBApi
 {
     /**
      * @class EClientSocket

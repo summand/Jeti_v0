@@ -1,17 +1,17 @@
 ﻿/* Copyright (C) 2013 Interactive Brokers LLC. All rights reserved.  This code is subject to the terms
  * and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Jeti_v0;
 using System.Threading;
-using IBSamples;
 using System.Collections.Generic;
+using IBApi;
 
-namespace Samples
+namespace Jeti_v0
 {
-    public class Sample
+    public class program
     {
 
         public static int Main(string[] args)
@@ -27,24 +27,27 @@ namespace Samples
             var tkrs = GetActiveContracts();
 
 
-            //Begin data collection manager  (gets a list of securities and opens API calls to start downloading real time data and storing in local database)
-            DataCollectionManager(ApiWrappper);
-
-
-
-
-
-            //Shut down           
-            Console.WriteLine("Disconnecting... Please press ENTER to close application.");
-            Console.ReadLine();
-            ApiWrappper.ClientSocket.eDisconnect();
+            ////Begin data collection manager  (gets a list of securities and opens API calls to start downloading real time data and storing in local database)
+            //DataCollectionManager(ApiWrappper);
+            
+            ////Shut down           
+            //Console.WriteLine("Disconnecting... Please press ENTER to close application.");
+            //Console.ReadLine();
+            //ApiWrappper.ClientSocket.eDisconnect();
             return 0;
         }
 
-        static public List<ActiveContracts> GetActiveContracts()
+        static public List<ActiveContract> GetActiveContracts()
         {
-            using (var jetiDB = )
+            using (var jetiDB = new JETIEntities())
+            {
+                return (from ActiveContract in jetiDB.ActiveContracts
+                        select ActiveContract).ToList();
+            }
         }
+
+
+
         private static void DataCollectionManager(EWrapperImpl wrapper)
         {
             // Get list of contracts to monitor from SQL

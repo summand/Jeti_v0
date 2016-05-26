@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 
 //Hint. we could separate the message validation from the Socket client class...
-namespace Jeti_v0
+namespace IBApi
 {
     public class MessageValidator
     {

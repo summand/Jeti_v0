@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Jeti_v0.TWSApi
+namespace IBApi.TWSApi
 {
     [Guid("573E95CF-F67C-4367-A95B-CB7599BD0673"), ComVisible(true)]
     public interface IComboLeg

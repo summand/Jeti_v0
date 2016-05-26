@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Jeti_v0
+namespace IBApi
 {
     /**
      * @class ComboLeg
@@ -15,7 +15,7 @@ namespace Jeti_v0
      * @sa Order
      */
     [ComVisible(true)]
-    public class ComboLeg : Jeti_v0.TWSApi.IComboLeg
+    public class ComboLeg : IBApi.TWSApi.IComboLeg
     {
         public static int SAME = 0;
         public static int 	OPEN = 1;

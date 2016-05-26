@@ -9,7 +9,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.IO;
 
-namespace Jeti_v0
+namespace IBApi
 {
     class EReader
     {
