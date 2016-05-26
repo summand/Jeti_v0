@@ -103,12 +103,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\source\csharpclient\CSharpAPI.csproj">
-      <Project>{8EDE0744-96C2-40B0-A8DC-37DF79370203}</Project>
-      <Name>CSharpAPI</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
