@@ -28,7 +28,7 @@ namespace Jeti_v0
 
             ////Begin data collection manager  (gets a list of securities and opens API calls to start downloading real time data and storing in local database)
             //DataCollectionManager(ApiWrappper);
-            Parallel.foreach{tckr in tckrs{} }
+            //Parallel.foreach{tckr in tckrs{} };
 
             //Signal Zoo - capture and calutulate signals on incoming data
 
