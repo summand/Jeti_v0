@@ -26,6 +26,10 @@ namespace Jeti_v0
             // Load securities
             var tkrs = GetActiveContracts();
 
+            foreach (var t in tkrs)
+                {
+                Console.WriteLine(t.ActivityDate + ", " + t.IBFuturesLocalSymbol);
+                }
             ////Begin data collection manager  (gets a list of securities and opens API calls to start downloading real time data and storing in local database)
             //DataCollectionManager(ApiWrappper);
             //Parallel.foreach{tckr in tckrs{} };
