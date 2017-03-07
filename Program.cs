@@ -29,24 +29,42 @@ namespace Jeti_v0
             // If no tickers found in database, load a default (hard coded) ticker
             if (activecontracts.Count == 0)
             {
-                ActiveContract defaultcontract = new ActiveContract();
-                DateTime date1 = new DateTime(1900, 12, 31, 0, 0, 0);
-                defaultcontract.ActivityDate = date1;
-                defaultcontract.IBFuturesLocalSymbol = "ZZN6";
-                activecontracts.Add(defaultcontract);
+                //ActiveContract defaultcontract = new ActiveContract();
+                //DateTime date1 = new DateTime(1900, 12, 31, 0, 0, 0);
+                //defaultcontract.ActivityDate = date1;
+                //defaultcontract.IBFuturesLocalSymbol = "ZZN6";
+                //activecontracts.Add(defaultcontract);
+            //}
+            //else
+            //{
+                Console.WriteLine("There are no active contracts for today in the database.  Closing in 3 seconds...");
+                Thread.Sleep(3000);
+                Environment.Exit(0);
             }
 
             // BUILD A CONTRACT FOR EACH TICKER
             // --http://stackoverflow.com/questions/10930705/creating-objects-dynamically-in-loop
-            // --should build a dictionary of contract objects
-            if (t.SecType == "FUT") 
+            // --Instantiate a List of contract objects before looping through ticker list
+            var IBcontractlist = new List<Contract>();
+
+            activecontracts.ForEach(t =>
             {
-                Contract nextcontract = BuildFuturesContract(t);
-            }
-            else if (t.SecType == "STK")
-            {
-                Contract nextcontract = BuildUSStock(t);
-            };
+                Console.WriteLine(t.ToString());
+
+                //if (t.GetType() == "FUT") 
+                //{
+                //    Contract nextcontract = BuildFuturesContract(t);
+                //}
+                //else if (t.SecType == "STK")
+                //{
+                //    Contract nextcontract = BuildUSStock(t);
+                //};
+                //List<Contracts>.add(new contract)
+            });
+            
+            
+            
+
 
             // BEGIN DATA CAPTURE
             Console.WriteLine("BEGINNING DATA CAPTURE");
