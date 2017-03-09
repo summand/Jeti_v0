@@ -35,7 +35,28 @@ namespace IBApi
         private string comboLegsDescription;
         private List<ComboLeg> comboLegs;
         private UnderComp underComp;
+        private int reqId1;
 
+        // counter of instances for creating unique reqIds
+        static int instances = 0;
+        public Contract()
+        {
+            instances++;
+        }
+        ~Contract()
+        {
+            instances--;
+        }
+        public static int GetActiveInstances()
+        {
+            return instances;
+        }
+
+        public int reqId
+        {
+            get { return reqId1; }
+            set { reqId1 = value; }
+        }
 
         /**
         * @brief The unique contract's identifier

@@ -17,7 +17,7 @@ namespace IBApi
     public class EClientSocket
     {
         private int serverVersion;
-        private EReader reader;
+        public EReader reader;
 
         private TcpClient tcpClient;
         NetworkStream tcpClientStream;

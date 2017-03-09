@@ -11,10 +11,12 @@ using System.IO;
 
 namespace IBApi
 {
-    class EReader
+    public class EReader
     {
         private EClientSocket parent;
         private BinaryReader tcpReader;
+        public Dictionary<string,dynamic> rtbUpdate;
+        //public bool rtbUpdateFlag;
 
         private ManualResetEvent stopEvent;
         private Thread runner;
@@ -44,8 +46,10 @@ namespace IBApi
             {
                 while (!stopEvent.WaitOne(0))
                 {
+                    //rtbUpdateFlag = false;
                     int incomingMessage = ReadInt();
                     ProcessIncomingMessage(incomingMessage);
+                    //if (rtbUpdateFlag) {}
                 }
             }
             catch (Exception e)
@@ -247,6 +251,7 @@ namespace IBApi
                 case IncomingMessage.RealTimeBars:
                     {
                         RealTimeBarsEvent();
+                        rtbUpdateFlag = true;
                         break;
                     }
                 case IncomingMessage.ScannerParameters:
@@ -1400,6 +1405,16 @@ namespace IBApi
             long volume = ReadLong();
             double wap = ReadDouble();
             int count = ReadInt();
+            //rtbUpdate.Clear();
+            //rtbUpdate.Add("reqId", requestId);
+            //rtbUpdate.Add("time", time);
+            //rtbUpdate.Add("open", open);
+            //rtbUpdate.Add("high", high);
+            //rtbUpdate.Add("low", low);
+            //rtbUpdate.Add("close", close);
+            //rtbUpdate.Add("volumne", volume);
+            //rtbUpdate.Add("wap", wap);
+            //rtbUpdate.Add("count", count);
             parent.Wrapper.realtimeBar(requestId, time, open, high, low, close, volume, wap, count);
         }
 
@@ -1411,7 +1426,7 @@ namespace IBApi
         }
 
         private void ScannerDataEvent()
-        {
+        {   
             ContractDetails conDet = new ContractDetails();
             int msgVersion = ReadInt();
             int requestId = ReadInt();

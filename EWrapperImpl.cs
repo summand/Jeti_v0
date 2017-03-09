@@ -10,9 +10,15 @@ namespace Jeti_v0
 {
     public class EWrapperImpl : EWrapper 
     {
-        EClientSocket clientSocket;
+        public EClientSocket clientSocket;
         private int nextOrderId;
+        private program parent;
 
+        //public EWrapperImpl(program parent)
+        //{
+        //    clientSocket = new EClientSocket(this);
+        //    this.parent = parent;
+        //}
         public EWrapperImpl()
         {
             clientSocket = new EClientSocket(this);
@@ -26,10 +32,11 @@ namespace Jeti_v0
 
         public virtual void realtimeBar(int reqId, long time, double open, double high, double low, double close, long volume, double WAP, int count)
         {
-            Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP + "\n");
-            Console.WriteLine("Time: " + time + ", Converted: " + UnixTimeStampToDateTime(time) + "\n");
+            //Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP + "\n");
+            //Console.WriteLine("Time: " + time + ", Converted: " + UnixTimeStampToDateTime(time) + "\n");
             //RealTimeBarCapturetoDB(close, time, ticker);
-            RealTimeBarCapturetoDB(close, time, "FakeTkr");
+            RealTimeBarCapturetoDB(close, time, reqId.ToString());
+            program.returnRTBfromAPI(reqId, time, open, high, low, close, volume, WAP, count);
         }
 
         public void RealTimeBarCapturetoDB(double close, long time, string ticker)

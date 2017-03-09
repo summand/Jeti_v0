@@ -1,5 +1,8 @@
-﻿/* Copyright (C) 2013 Interactive Brokers LLC. All rights reserved.  This code is subject to the terms
- * and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
+﻿/* 
+ * Jeti Trading System v0
+ * Date 2017-03
+ * Author: Daniel Siliski
+ *  */
 using System;
 using System.Linq;
 using System.Net;
@@ -10,14 +13,16 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using IBApi;
 
-namespace Jeti_v0
-{
-    public class program
-    {
-        public static int Main(string[] args)
-        {
+namespace Jeti_v0{
+    public class program{
+        static bool rtbUpdateFlag;
+        static Dictionary<string, dynamic> rtbVals;
+
+        public static int Main(string[] args){
+
             //Connect to the API
             EWrapperImpl ApiWrapper = new EWrapperImpl();
+            //public EWrapperImpl ApiWrapper;
             ApiWrapper.ClientSocket.eConnect("127.0.0.1", 7496, 0, false);
 
             // before proceding, monitor nextValidId
@@ -28,63 +33,65 @@ namespace Jeti_v0
 
             // If no tickers found in database, load a default (hard coded) ticker
             if (activecontracts.Count == 0)
-            {
-                //ActiveContract defaultcontract = new ActiveContract();
-                //DateTime date1 = new DateTime(1900, 12, 31, 0, 0, 0);
-                //defaultcontract.ActivityDate = date1;
-                //defaultcontract.IBFuturesLocalSymbol = "ZZN6";
-                //activecontracts.Add(defaultcontract);
-            //}
-            //else
-            //{
-                Console.WriteLine("There are no active contracts for today in the database.  Closing in 3 seconds...");
-                Thread.Sleep(3000);
-                Environment.Exit(0);
-            }
+            {ActiveContract defaultcontract = new ActiveContract();
+             DateTime date1 = new DateTime(1900, 12, 31, 0, 0, 0);
+             defaultcontract.ActivityDate = date1;
+             defaultcontract.IBFuturesLocalSymbol = "ZZN6";
+             activecontracts.Add(defaultcontract);}
 
             // BUILD A CONTRACT FOR EACH TICKER
-            // --http://stackoverflow.com/questions/10930705/creating-objects-dynamically-in-loop
-            // --Instantiate a List of contract objects before looping through ticker list
             var IBcontractlist = new List<Contract>();
-
             activecontracts.ForEach(t =>
-            {
-                Console.WriteLine(t.ToString());
+            {if (t.ActivityDate == DateTime.Today)
+                {Contract nextcontract = BuildNymexFuturesContract(t);
+                    //System.Diagnostics.Debug.WriteLine(nextcontract.LocalSymbol);
+                    IBcontractlist.Add(nextcontract);}});
 
-                //if (t.GetType() == "FUT") 
-                //{
-                //    Contract nextcontract = BuildFuturesContract(t);
-                //}
-                //else if (t.SecType == "STK")
-                //{
-                //    Contract nextcontract = BuildUSStock(t);
-                //};
-                //List<Contracts>.add(new contract)
-            });
-            
-            
-            
+            // set up dictionary of Tickers:ReqIds
+            Dictionary<string, int> reqIds = new Dictionary<string, int>();
+       
+            //---------------------------------------------------------------------------------
+            // Capture Incoming Prices
+            System.Diagnostics.Debug.WriteLine("---------------------------------------------");
+            rtbUpdateFlag = false;
+            Task dataCapture = new Task(() =>
+                {while (1 != 0){
+                    System.Diagnostics.Debug.WriteLine("**Test RTB Update:");
+                    if (rtbUpdateFlag){
+                            System.Diagnostics.Debug.WriteLine("rtbUpdate:");
+                            System.Diagnostics.Debug.WriteLine(rtbVals["time"]);
+                            System.Diagnostics.Debug.WriteLine("rtbUpdate:");
+                            System.Diagnostics.Debug.WriteLine("rtbUpdate:");
+                            System.Diagnostics.Debug.WriteLine("rtbUpdate:");
+                            rtbUpdateFlag = false;
+                        }
+                    Thread.Sleep(700);
+                    }
+                });
 
 
-            // BEGIN DATA CAPTURE
-            Console.WriteLine("BEGINNING DATA CAPTURE");
+
+            //---------------------------------------------------------------------------------
+            // open data feeds and persist received data to database
             int i = 0;
-            Parallel.ForEach(activecontracts, (t) =>
+            Parallel.ForEach(IBcontractlist, (t) =>
             {
                 i++;
-
-                // Write list of Active Contract tickers
-                Console.WriteLine(t.ActivityDate + ", " + t.IBFuturesLocalSymbol);
-
-                //Request Real Time Bars for saving down to database
-                ApiWrapper.ClientSocket.reqRealTimeBars(i, BuildFuturesContract(t), -1, "BID", false, GetFakeParameters(4));
+                reqIds.Add(t.LocalSymbol, i);
+                System.Diagnostics.Debug.WriteLine("-----------------------------");
+                System.Diagnostics.Debug.WriteLine(t.LocalSymbol);
+                ApiWrapper.ClientSocket.reqRealTimeBars(t.reqId, t, -1, "BID", false, 
+                    GetFakeParameters(4));                
                 Thread.Sleep(5000);
             });
 
+
+
+            //---------------------------------------------------------------------------------
             //Signal Zoo - capture and calutulate signals on incoming data
-
+            //---------------------------------------------------------------------------------
             //Trade Selection - 
-
+            //---------------------------------------------------------------------------------
             ////Shut down           
             //Console.WriteLine("Disconnecting... Please press ENTER to close application.");
             //Console.ReadLine();
@@ -92,14 +99,34 @@ namespace Jeti_v0
             return 0;
         }
 
-        public static Contract BuildFuturesContract(ActiveContract t)
+        public static Contract BuildNymexFuturesContract(ActiveContract t)
         {
             Contract contract = new Contract();
             contract.SecType = "FUT";
             contract.Exchange = "NYMEX";
             contract.Currency = "USD";
-            contract.LocalSymbol = "CLM6";
+            contract.LocalSymbol = t.IBFuturesLocalSymbol;
+            contract.reqId = Contract.GetActiveInstances();
+
             return contract;
+        }
+
+        public static void returnRTBfromAPI(int reqId, long time, double open, 
+            double high, double low, double close, long volume, double WAP, int count)
+        {
+            try { rtbVals.Clear(); }
+            catch { }
+
+            rtbVals.Add("reqId", reqId);
+            rtbVals.Add("time", time);
+            rtbVals.Add("open", open);
+            rtbVals.Add("high", high);
+            rtbVals.Add("low", low);
+            rtbVals.Add("close", close);
+            rtbVals.Add("volumne", volume);
+            rtbVals.Add("wap", WAP);
+            rtbVals.Add("count", count);
+            rtbUpdateFlag = true;
         }
 
         public static Contract BuildUSStock(ActiveContract t)
@@ -128,6 +155,9 @@ namespace Jeti_v0
                 fakeParams.Add(new TagValue("tag" + i, i.ToString()));
             return fakeParams;
         }
+
+
+
         
     }
 }
