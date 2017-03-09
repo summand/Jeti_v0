@@ -17,10 +17,9 @@ using System.Data;
 
 namespace Jeti_v0{
     public class program{
-        public static bool rtbUpdateFlag = new bool();
-        static Dictionary<string, dynamic> rtbVals = new Dictionary<string, dynamic>();
         static DataTable p = new DataTable();
-        
+        static DataTable s = new DataTable();
+
         struct rtbUpdateStruct
         {
             internal string ticker;
@@ -29,7 +28,6 @@ namespace Jeti_v0{
         }
 
         static Queue q = new Queue();
-
         static Dictionary<string, int> reqIds = new Dictionary<string, int>();
 
         public static int Main(string[] args){
@@ -64,7 +62,7 @@ namespace Jeti_v0{
             p.Columns.Add("ticker", typeof(string));
             p.Columns.Add("close", typeof(float));
             p.Columns.Add("time", typeof(DateTime));
-            p.Columns.Add("processed", typeof(DateTime));
+            //p.Columns.Add("processed", typeof(DateTime));
 
             // set up dictionary of Tickers:ReqIds
             int i = 0;
@@ -74,7 +72,7 @@ namespace Jeti_v0{
                 reqIds.Add(t.LocalSymbol, i);
             });
 
-            // open data feeds and persist received data to database
+            // open an api datafeed for each contract
             Parallel.ForEach(IBcontractlist, (t) =>
             {
                 i++;
@@ -82,43 +80,8 @@ namespace Jeti_v0{
                     GetFakeParameters(4));
                 Thread.Sleep(5000);
             });
-
-            // Capture incoming prices
-            //rtbUpdateFlag = false;
-            //string ticker = "";
-
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            ////// WORKING VERSION ////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            // capture incoming price data, writing to console & database 
-            //     & appending to in memory time series for Studies
-            //while (1 > 0)
-            //{
-            //    // if new data arrived...
-            //    if (rtbUpdateFlag)
-            //    {
-            //        // look up ticker from reqId of datafeed
-            //        ticker = reqIds.FirstOrDefault(x => x.Value == rtbVals["reqId"]).Key;
-
-            //        // write to console
-            //        Console.WriteLine(ticker +
-            //            ": open " + rtbVals["open"] +
-            //            ", time: " + rtbVals["time"]);
-
-            //        // write to database
-            //        ApiWrapper.RealTimeBarCapturetoDB(rtbVals["close"], rtbVals["time"], ticker);
-
-            //        // reset update flag
-            //        rtbUpdateFlag = false;
-            //    }
-            //}
-
-
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            ////// QUEUE/DEQUE DEV ////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
+            
+            // dequeue price updates and write to database
             while (1 > 0)
             {
                 // if new data arrived...
@@ -135,63 +98,24 @@ namespace Jeti_v0{
                     // write to database
                     ApiWrapper.RealTimeBarCapturetoDB(t.close,t.time,t.ticker);
 
-                    // reset update flag
-                    rtbUpdateFlag = false;
+                    // append to datatable
+                    p.Rows.Add(t.ticker, t.close, t.time);
+
+                    // update technical indicators 
+                    //Studies(t.ticker);
+                    //Scores(t.ticker);
+                    //Weights(t.ticker);
+                    //Trades(t.ticker);
+                    //Orders();
+                    //Reports();
                 }
             }
-
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            ////// Parallel feeds DEV ///////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////
-            //// open data feeds and persist received data to database
-            //Parallel.ForEach(IBcontractlist, (t) =>
-            //{
-            //    while (1 > 0)
-            //    {
-            //        bool f = new bool();
-
-
-
-            //        // if new data arrived...
-            //        if (rtbUpdateFlag)
-            //        {
-            //            // look up ticker from reqId of datafeed
-            //            //ticker = reqIds.FirstOrDefault(x => x.Value == rtbVals["reqId"]).Key;
-
-            //            // write to console
-            //            Console.WriteLine(t.LocalSymbol +
-            //                ": open " + rtbVals["open"] +
-            //                ", time: " + rtbVals["time"]);
-
-            //            // write to database
-            //            ApiWrapper.RealTimeBarCapturetoDB(rtbVals["close"], rtbVals["time"], t.LocalSymbol);
-
-
-
-
-            //            // reset update flag
-            //            rtbUpdateFlag = false;
-            //        };
-            //    };
-            //});
-
-
-
-
-
-
-
-            //---------------------------------------------------------------------------------
-            //Signal Zoo - capture and calutulate signals on incoming data
-            //---------------------------------------------------------------------------------
-            //Trade Selection - 
-            //---------------------------------------------------------------------------------
+            
             ////Shut down           
             //Console.WriteLine("Disconnecting... Please press ENTER to close application.");
             //Console.ReadLine();
             //ApiWrappper.ClientSocket.eDisconnect();
-            return 0;
+            //return 0;
         }
 
         public static Contract BuildNymexFuturesContract(ActiveContract t)
@@ -199,48 +123,23 @@ namespace Jeti_v0{
             Contract contract = new Contract();
             contract.SecType = "FUT";
             if (t.IBFuturesLocalSymbol.Substring(t.IBFuturesLocalSymbol.Length-2) == "ES")
-            {
-                contract.Exchange = "GLOBEX";
-            }
-            else
-            {
-                contract.Exchange = "NYMEX";
-            }
+            {contract.Exchange = "GLOBEX";}
+            else {contract.Exchange = "NYMEX";}
             
-
             contract.Currency = "USD";
             contract.LocalSymbol = t.IBFuturesLocalSymbol;
             contract.reqId = Contract.GetActiveInstances();
-
-
-
-
-
-
             return contract;
         }
 
         public static void returnRTBfromAPI(int reqId, long time, double open, 
             double high, double low, double close, long volume, double WAP, int count)
         {   
-            //rtbVals.Clear(); 
-            //rtbVals.Add("reqId", reqId);
-            //rtbVals.Add("time", time);
-            //rtbVals.Add("open", open);
-            //rtbVals.Add("high", high);
-            //rtbVals.Add("low", low);
-            //rtbVals.Add("close", close);
-            //rtbVals.Add("volumne", volume);
-            //rtbVals.Add("wap", WAP);
-            //rtbVals.Add("count", count);
-            //rtbUpdateFlag = true;
-
             rtbUpdateStruct rtb = new rtbUpdateStruct();
             rtb.close = close;
             rtb.time = time;
-            rtb.ticker = reqIds.FirstOrDefault(x => x.Value == rtbVals["reqId"]).Key;
-            q.Enqueue(rtb);
-            
+            rtb.ticker = reqIds.FirstOrDefault(x => x.Value == reqId).Key;
+            q.Enqueue(rtb);  
         }
 
         public static Contract BuildUSStock(ActiveContract t)
@@ -270,7 +169,35 @@ namespace Jeti_v0{
             return fakeParams;
         }
 
+        private static void Studies(string t)
+        {
+            // get data from p for t
 
+            // calc 5period EWMA
+
+            // calc 10period EWMA
+
+            // calc 9period RSI
+
+            // write values to a studies DataTable
+        }
+
+        private static void Scores(string t)
+        {
+            // calculate the score values of each contract
+        }
+        private static void Weights(string t)
+        {
+            // decide ideal portfolio weights (alpha forecast + t-cost estimate)
+        }
+        private static void Orders(string t)
+        {
+            // generate and execute API orders
+        }
+        private static void Reports(string t)
+        {
+            // persist data on trade price, pnl, positions, etc to database (and in future to reporting layer)
+        }
 
         
     }
