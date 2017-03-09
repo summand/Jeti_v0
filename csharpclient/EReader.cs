@@ -15,7 +15,7 @@ namespace IBApi
     {
         private EClientSocket parent;
         private BinaryReader tcpReader;
-        public Dictionary<string,dynamic> rtbUpdate;
+        //public Dictionary<string,dynamic> rtbUpdate;
         //public bool rtbUpdateFlag;
 
         private ManualResetEvent stopEvent;
@@ -251,7 +251,7 @@ namespace IBApi
                 case IncomingMessage.RealTimeBars:
                     {
                         RealTimeBarsEvent();
-                        rtbUpdateFlag = true;
+                        //rtbUpdateFlag = true;
                         break;
                     }
                 case IncomingMessage.ScannerParameters:

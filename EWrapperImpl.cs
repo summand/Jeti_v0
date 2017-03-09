@@ -35,7 +35,7 @@ namespace Jeti_v0
             //Console.WriteLine("RealTimeBars. " + reqId + " - Time: " + time + ", Open: " + open + ", High: " + high + ", Low: " + low + ", Close: " + close + ", Volume: " + volume + ", Count: " + count + ", WAP: " + WAP + "\n");
             //Console.WriteLine("Time: " + time + ", Converted: " + UnixTimeStampToDateTime(time) + "\n");
             //RealTimeBarCapturetoDB(close, time, ticker);
-            RealTimeBarCapturetoDB(close, time, reqId.ToString());
+            //RealTimeBarCapturetoDB(close, time, reqId.ToString());
             program.returnRTBfromAPI(reqId, time, open, high, low, close, volume, WAP, count);
         }
 
