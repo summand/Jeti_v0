@@ -61,7 +61,7 @@ namespace Jeti_v0{
             // set up dataTable for capture of datafeed price data
             p.Columns.Add("ticker", typeof(string));
             p.Columns.Add("close", typeof(float));
-            p.Columns.Add("time", typeof(DateTime));
+            p.Columns.Add("time", typeof(Int64));
             //p.Columns.Add("processed", typeof(DateTime));
 
             // set up dictionary of Tickers:ReqIds
