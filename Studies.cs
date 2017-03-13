@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Jeti_v0
 {
-    class Class1
+    class Studies
     {
     }
 }
